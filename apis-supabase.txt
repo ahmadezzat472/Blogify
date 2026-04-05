@@ -1,0 +1,38 @@
+// Register
+await supabase.auth.signUp({ email, password, options: { data: { name } } })
+
+// Login
+await supabase.auth.signInWithPassword({ email, password })
+
+// Logout
+await supabase.auth.signOut()
+
+// Get current user
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+
+// Fetch all posts
+const { data } = await supabase
+  .from("posts")
+  .select("*")
+  .order("created_at", { ascending: false })
+
+// Add post
+await supabase
+  .from("posts")
+  .insert({ title, description, image_url, author_id, author_name })
+
+// Edit post (RLS ensures only owner can do this)
+await supabase.from("posts").update({ title, description }).eq("id", postId)
+
+// Delete post
+await supabase.from("posts").delete().eq("id", postId)
+
+// Upload image
+const { data } = await supabase.storage
+  .from("post-images")
+  .upload(fileName, file)
+const {
+  data: { publicUrl },
+} = supabase.storage.from("post-images").getPublicUrl(fileName)
