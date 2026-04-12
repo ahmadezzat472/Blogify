@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Loading from "../shared/Loading";
+import Loading from "../Loading/Loading";
 
 interface LoadableProps {
   Component: React.FC;
