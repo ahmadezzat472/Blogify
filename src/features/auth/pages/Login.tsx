@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { FieldDescription } from "@/components/ui/field";
+import loginImage from "@/assets/images/login.png";
 import LoginForm from "../components/LoginForm";
 
 const LoginPage = () => {
@@ -10,9 +11,9 @@ const LoginPage = () => {
           <LoginForm />
           <div className="relative hidden bg-muted md:block">
             <img
-              src="/src/assets/images/login.png"
+              src={loginImage}
               alt="Image"
-              className="d absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
         </CardContent>

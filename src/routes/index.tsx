@@ -1,21 +1,76 @@
-import AuthLayout from "@/features/auth/layout"
-import LoginPage from "@/features/auth/pages/Login"
-import RegisterPage from "@/features/auth/pages/Register"
-import HomePage from "@/features/home/HomePage"
-import MainLayout from "@/layouts"
-import { Route, Routes } from "react-router"
+import { lazy } from "react";
+import { createBrowserRouter } from "react-router";
+import Loadable from "@/components/utils/Loadable";
+import MainLayout from "@/layouts";
+import AuthLayout from "@/features/auth/layout";
+import ProtectedRoute from "./ProtectedRoute";
 
-export default function AppRoutes() {
-  return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="" element={<HomePage />} />
-      </Route>
+const Pages = {
+  Home: lazy(() => import("@/features/home/HomePage")),
+  // AddPost: lazy(() => import("@/features/posts/pages/AddPost")),
+  // EditPost: lazy(() => import("@/features/posts/pages/EditPost")),
+  // NotFound: lazy(() => import("@/features/common/pages/NotFound")),
+};
 
-      <Route path="auth" element={<AuthLayout />}>
-        <Route index path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-      </Route>
-    </Routes>
-  )
-}
+const AuthPages = {
+  Login: lazy(() => import("@/features/auth/pages/Login")),
+  Register: lazy(() => import("@/features/auth/pages/Register")),
+};
+
+const router = createBrowserRouter([
+  // Public routes
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <Loadable Component={Pages.Home} />,
+      },
+    ],
+  },
+
+  // Protected routes
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
+    // children: [
+    //   {
+    //     path: "post/new",
+    //     element: <Loadable Component={Pages.AddPost} />,
+    //   },
+    //   {
+    //     path: "post/edit/:id",
+    //     element: <Loadable Component={Pages.EditPost} />,
+    //   },
+    // ],
+  },
+
+  // Auth routes
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "login",
+        element: <Loadable Component={AuthPages.Login} />,
+      },
+      {
+        path: "register",
+        element: <Loadable Component={AuthPages.Register} />,
+      },
+    ],
+  },
+
+  // Not found
+  {
+    path: "*",
+    // element: <Loadable Component={Pages.NotFound} />,
+  },
+]);
+
+export default router;

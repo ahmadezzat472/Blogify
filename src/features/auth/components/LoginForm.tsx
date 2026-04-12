@@ -1,14 +1,17 @@
 import { useState, type SubmitEvent } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "../services";
 import { toast } from "sonner";
+import {
+  type LoginValues,
+  getErrorMessages,
+  validateLoginValues,
+} from "../utils/form";
 
-type DefaultValues = { email: string; password: string };
-
-const DEFAULT_VALUES: DefaultValues = {
+const DEFAULT_VALUES: LoginValues = {
   email: "",
   password: "",
 };
@@ -17,7 +20,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const [values, setValues] = useState(DEFAULT_VALUES);
-  const [errors, setErrors] = useState(DEFAULT_VALUES);
+  const [errors, setErrors] = useState<Partial<LoginValues>>({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,30 +29,12 @@ const LoginForm = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   }
 
-  function validate() {
-    const newErrors = {} as DefaultValues;
-
-    if (!values.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!values.password) {
-      newErrors.password = "Password is required";
-    } else if (values.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    return newErrors;
-  }
-
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError("");
 
-    const newErrors = validate();
-    const errorValues = Object.values(newErrors);
+    const newErrors = validateLoginValues(values);
+    const errorValues = getErrorMessages(newErrors);
 
     if (errorValues.length > 0) {
       setErrors(newErrors);
@@ -60,23 +45,28 @@ const LoginForm = () => {
       return;
     }
 
-    setLoading(true);
-    const { data, error } = await loginUser(values);
-    console.log(data);
+    try {
+      setLoading(true);
+      const { error } = await loginUser(values);
 
-    setLoading(false);
+      if (error) {
+        setServerError(error.message);
+        toast.error(error.message);
+        return;
+      }
 
-    if (error) {
-      setServerError(error.message);
-      toast.error(error.message);
-      return;
+      toast.success("Logged in successfully!");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch {
+      const fallbackMessage = "Unexpected error happened, please try again.";
+      setServerError(fallbackMessage);
+      toast.error(fallbackMessage);
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Logged in successfully!");
-
-    setTimeout(() => {
-      navigate("/");
-    }, 1000);
   }
 
   return (
@@ -92,7 +82,8 @@ const LoginForm = () => {
         <Input
           id="email"
           name="email"
-          type="text"
+          type="email"
+          autoComplete="email"
           placeholder="m@example.com"
           value={values.email}
           onChange={handleChange}
@@ -106,6 +97,7 @@ const LoginForm = () => {
           <Label htmlFor="password">Password</Label>
           <Button
             variant="link"
+            type="button"
             className="ml-auto text-sm underline-offset-2 hover:underline"
           >
             Forgot your password?
@@ -115,6 +107,7 @@ const LoginForm = () => {
           id="password"
           name="password"
           type="password"
+          autoComplete="current-password"
           value={values.password}
           onChange={handleChange}
         />
@@ -134,9 +127,9 @@ const LoginForm = () => {
 
       <p className="text-center text-sm">
         Don't have an account?{" "}
-        <a href="/auth/register" className="underline underline-offset-4">
+        <Link to="/auth/register" className="underline underline-offset-4">
           Sign up
-        </a>
+        </Link>
       </p>
     </form>
   );

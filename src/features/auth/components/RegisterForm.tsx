@@ -2,17 +2,16 @@ import { useState, type SubmitEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { registerUser } from "../services";
 import { toast } from "sonner";
+import {
+  type RegisterValues,
+  getErrorMessages,
+  validateRegisterValues,
+} from "../utils/form";
 
-type DefaultValues = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-const DEFAULT_VALUES: DefaultValues = {
+const DEFAULT_VALUES: RegisterValues = {
   name: "",
   email: "",
   password: "",
@@ -22,7 +21,7 @@ const RegisterForm = () => {
   const navigate = useNavigate();
 
   const [values, setValues] = useState(DEFAULT_VALUES);
-  const [errors, setErrors] = useState(DEFAULT_VALUES);
+  const [errors, setErrors] = useState<Partial<RegisterValues>>({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,36 +30,12 @@ const RegisterForm = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   }
 
-  function validate() {
-    const newErrors = {} as DefaultValues;
-
-    if (!values.name) {
-      newErrors.name = "Name is required";
-    } else if (values.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!values.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!values.password) {
-      newErrors.password = "Password is required";
-    } else if (values.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    return newErrors;
-  }
-
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError("");
 
-    const newErrors = validate();
-    const errorValues = Object.values(newErrors);
+    const newErrors = validateRegisterValues(values);
+    const errorValues = getErrorMessages(newErrors);
 
     if (errorValues.length > 0) {
       setErrors(newErrors);
@@ -71,17 +46,25 @@ const RegisterForm = () => {
       return;
     }
 
-    setLoading(true);
-    const { error } = await registerUser(values);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { error } = await registerUser(values);
 
-    if (error) {
-      setServerError(error.message);
-      toast.error(error.message);
-      return;
+      if (error) {
+        setServerError(error.message);
+        toast.error(error.message);
+        return;
+      }
+
+      toast.success("Account created successfully!");
+      navigate("/auth/login");
+    } catch {
+      const fallbackMessage = "Unexpected error happened, please try again.";
+      setServerError(fallbackMessage);
+      toast.error(fallbackMessage);
+    } finally {
+      setLoading(false);
     }
-
-    navigate("/auth/login");
   }
 
   return (
@@ -100,6 +83,7 @@ const RegisterForm = () => {
           id="name"
           name="name"
           type="text"
+          autoComplete="name"
           placeholder="John Doe"
           value={values.name}
           onChange={handleChange}
@@ -114,6 +98,7 @@ const RegisterForm = () => {
           id="email"
           name="email"
           type="email"
+          autoComplete="email"
           placeholder="m@example.com"
           value={values.email}
           onChange={handleChange}
@@ -128,6 +113,7 @@ const RegisterForm = () => {
           id="password"
           name="password"
           type="password"
+          autoComplete="new-password"
           value={values.password}
           onChange={handleChange}
         />
@@ -147,9 +133,9 @@ const RegisterForm = () => {
 
       <p className="text-center text-sm">
         Already have an account?{" "}
-        <a href="/auth/login" className="underline underline-offset-4">
+        <Link to="/auth/login" className="underline underline-offset-4">
           Login
-        </a>
+        </Link>
       </p>
     </form>
   );

@@ -1,6 +1,7 @@
 import { FieldDescription } from "@/components/ui/field";
 import RegisterForm from "../components/RegisterForm";
 import { Card, CardContent } from "@/components/ui/card";
+import loginImage from "@/assets/images/login.png";
 
 const RegisterPage = () => {
   return (
@@ -10,9 +11,9 @@ const RegisterPage = () => {
           <RegisterForm />
           <div className="relative hidden bg-muted md:block">
             <img
-              src="/src/assets/images/login.png"
+              src={loginImage}
               alt="Image"
-              className="d absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
         </CardContent>
