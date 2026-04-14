@@ -1,63 +1,70 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Blog } from "../Types/Blog";
+import { Clock3 } from "lucide-react";
+import BlogCardAction from "./BlogCardAction";
+import { formattedDate } from "@/utils/formattedDate";
+import { estimatedReadMinutes } from "../utils/estimatedReadMinutes";
+import stringExcerpt from "../utils/stringExcerpt";
+import BlogImage from "@/assets/images/No-Image-Blog.png";
+import Avatar from "@/assets/images/Avatar.jpg";
 
 interface BlogProps {
   blog: Blog;
 }
 
 const BlogCard = ({ blog }: BlogProps) => {
+  console.log(blog.image_url);
+
   return (
-    <Card className="group relative grid-cols-2 overflow-hidden p-0 shadow-xl shadow-slate-900/5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 md:grid">
-      <figure className="relative h-64 overflow-hidden md:h-full">
+    <Card className="group relative gap-0 overflow-hidden p-0 shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 md:grid md:grid-cols-2">
+      <figure className="relative min-h-full overflow-hidden md:h-64 lg:h-72">
         <img
-          src={
-            blog.image_url ??
-            "https://via.placeholder.com/600x400?text=No+Image"
-          }
+          src={blog.image_url || BlogImage}
           alt={blog.title}
-          className="h-full w-full object-cover grayscale-20 transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+          className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-transparent to-white/40 md:to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/45 via-black/10 to-transparent" />
+        <div className="absolute inset-0 ring-1 ring-black/5 ring-inset" />
       </figure>
-      <CardContent className="px-0 py-8">
-        {/* Content */}
-        <div className="flex flex-col justify-center">
-          {/* Category + Read time */}
-          <div className="mb-6 flex items-center gap-3">
-            <Badge className="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-black tracking-tighter text-blue-700 uppercase hover:bg-blue-100">
-              {blog.category.name}
-            </Badge>
-            <span className="text-xs font-medium text-muted-foreground">
-              {blog.created_at} Min Read
-            </span>
-          </div>
-
-          {/* Title */}
-          <h3 className="mb-4 text-3xl leading-tight font-black tracking-tight">
-            {blog.title}
-          </h3>
-
-          {/* Description */}
-          <p className="mb-8 text-base leading-relaxed text-muted-foreground">
-            {blog.description}
-          </p>
-
-          {/* Author */}
-          <div className="mt-auto flex items-center gap-3">
+      <CardContent className="flex flex-col justify-between gap-8 p-6">
+        <div>
+          <div className="flex items-center gap-3">
             <img
-              src={"https://via.placeholder.com/150?text=No+Avatar"}
+              src={Avatar}
               alt={blog.author.name}
-              className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm"
+              className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover shadow-sm"
             />
-            <div>
-              <p className="text-sm font-bold">{blog.author.name}</p>
-              {/* <p className="text-xs text-muted-foreground">
-                {blog.author.role}
-              </p> */}
+            <div className="min-w-0">
+              <p className="text-lg font-bold">{blog.author.name}</p>
+              <div className="mt-1 flex items-center gap-2 text-xs font-medium">
+                <span className="text-muted-foreground">
+                  {formattedDate(blog.created_at)}
+                </span>
+                <Clock3 className="size-3.5 text-primary" />
+                <span className="text-muted-foreground">
+                  {estimatedReadMinutes(blog.description)} min read
+                </span>
+              </div>
             </div>
           </div>
+
+          <div className="my-6">
+            <h3 className="text-2xl leading-tight font-black tracking-tight md:text-3xl">
+              {blog.title}
+            </h3>
+            <Badge className="mt-1 w-fit rounded-full border border-primary-300 bg-primary-100 text-primary">
+              {blog.category.name}
+            </Badge>
+          </div>
+
+          <p className="mb-4 text-base leading-relaxed text-muted-foreground">
+            {stringExcerpt(blog.description, 150)}
+          </p>
         </div>
+
+        <BlogCardAction authorId={blog.author.id} blogId={blog.id} />
       </CardContent>
     </Card>
   );

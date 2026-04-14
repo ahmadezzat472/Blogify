@@ -21,17 +21,18 @@ const LoginForm = () => {
 
   const [values, setValues] = useState(DEFAULT_VALUES);
   const [errors, setErrors] = useState<Partial<LoginValues>>({});
-  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setValues({ ...values, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    setValues((prevValues) => ({
+      ...prevValues,
+      [e.target.name]: e.target.value,
+    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [e.target.name]: "" }));
   }
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    setServerError("");
 
     const newErrors = validateLoginValues(values);
     const errorValues = getErrorMessages(newErrors);
@@ -47,10 +48,9 @@ const LoginForm = () => {
 
     try {
       setLoading(true);
-      const { error } = await loginUser(values);
 
+      const { error } = await loginUser(values);
       if (error) {
-        setServerError(error.message);
         toast.error(error.message);
         return;
       }
@@ -62,7 +62,6 @@ const LoginForm = () => {
       }, 1000);
     } catch {
       const fallbackMessage = "Unexpected error happened, please try again.";
-      setServerError(fallbackMessage);
       toast.error(fallbackMessage);
     } finally {
       setLoading(false);
@@ -116,13 +115,13 @@ const LoginForm = () => {
         )}
       </div>
 
-      {/* Server error */}
-      {serverError && (
-        <p className="text-center text-sm text-red-500">{serverError}</p>
-      )}
-
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={loading}
+        isLoading={loading}
+      >
+        Login
       </Button>
 
       <p className="text-center text-sm">

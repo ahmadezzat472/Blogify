@@ -8,7 +8,8 @@ import ProtectedRoute from "./ProtectedRoute";
 const Pages = {
   Home: lazy(() => import("@/features/home/HomePage")),
   Blogs: lazy(() => import("@/features/blog/pages/Blogs")),
-  // AddPost: lazy(() => import("@/features/posts/pages/AddPost")),
+  BlogDetails: lazy(() => import("@/features/blog/pages/BlogDetails")),
+  AddUpdateBlog: lazy(() => import("@/features/blog/pages/AddUpdateBlog")),
   // EditPost: lazy(() => import("@/features/posts/pages/EditPost")),
   // NotFound: lazy(() => import("@/features/common/pages/NotFound")),
 };
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         path: "blogs",
         element: <Loadable Component={Pages.Blogs} />,
       },
+      {
+        path: "blogs/:id",
+        element: <Loadable Component={Pages.BlogDetails} />,
+      },
     ],
   },
 
@@ -44,14 +49,14 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      // {
-      //   path: "post/new",
-      //   element: <Loadable Component={Pages.AddPost} />,
-      // },
-      // {
-      //   path: "post/edit/:id",
-      //   element: <Loadable Component={Pages.EditPost} />,
-      // },
+      {
+        path: "blog/new",
+        element: <Loadable Component={Pages.AddUpdateBlog} />,
+      },
+      {
+        path: "blog/edit/:id",
+        element: <Loadable Component={Pages.AddUpdateBlog} />,
+      },
     ],
   },
 

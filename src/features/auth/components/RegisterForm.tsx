@@ -22,17 +22,18 @@ const RegisterForm = () => {
 
   const [values, setValues] = useState(DEFAULT_VALUES);
   const [errors, setErrors] = useState<Partial<RegisterValues>>({});
-  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setValues({ ...values, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    setValues((prevValues) => ({
+      ...prevValues,
+      [e.target.name]: e.target.value,
+    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [e.target.name]: "" }));
   }
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    setServerError("");
 
     const newErrors = validateRegisterValues(values);
     const errorValues = getErrorMessages(newErrors);
@@ -51,7 +52,6 @@ const RegisterForm = () => {
       const { error } = await registerUser(values);
 
       if (error) {
-        setServerError(error.message);
         toast.error(error.message);
         return;
       }
@@ -60,7 +60,6 @@ const RegisterForm = () => {
       navigate("/auth/login");
     } catch {
       const fallbackMessage = "Unexpected error happened, please try again.";
-      setServerError(fallbackMessage);
       toast.error(fallbackMessage);
     } finally {
       setLoading(false);
@@ -122,17 +121,17 @@ const RegisterForm = () => {
         )}
       </div>
 
-      {/* Server error */}
-      {serverError && (
-        <p className="text-center text-sm text-red-500">{serverError}</p>
-      )}
-
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Creating account..." : "Create account"}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={loading}
+        isLoading={loading}
+      >
+        Create account
       </Button>
 
       <p className="text-center text-sm">
-        Already have an account?{" "}
+        Already have an account?
         <Link to="/auth/login" className="underline underline-offset-4">
           Login
         </Link>
