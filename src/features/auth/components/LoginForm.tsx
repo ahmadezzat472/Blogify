@@ -99,6 +99,7 @@ const LoginForm = () => {
           Password
         </Label>
         <Input
+          placeholder="••••••••"
           id="password"
           name="password"
           type="password"
