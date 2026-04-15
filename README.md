@@ -28,6 +28,8 @@ VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_anon_key
 ```
 
+`VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY` is the public (anon) Supabase key used by this project.
+
 ## Getting Started
 
 ```bash
