@@ -15,16 +15,18 @@ const BlogCardAction = ({ blogId, authorId }: BlogCardActionProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant={"secondary"} className="flex-1">
-        <Link to={`/blogs/${blogId}`}>Read More</Link>
-      </Button>
+      <Link to={`/blogs/${blogId}`}>
+        <Button variant={"secondary"} className="flex-1">
+          Read More
+        </Button>
+      </Link>
       {isOwner && (
         <>
-          <Button size={"icon"} className="">
-            <Link to={`/blog/edit/${blogId}`}>
+          <Link to={`/blog/edit/${blogId}`}>
+            <Button size={"icon"} className="">
               <Pencil />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           <DeleteBlogConfirm blogId={blogId} />
         </>
       )}
