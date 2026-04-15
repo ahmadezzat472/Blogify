@@ -3,101 +3,88 @@ import { Link } from "react-router";
 import { Button } from "../../ui/button";
 import NavLinks from "./NavLinks";
 import Logo from "../Logo";
-import { Input } from "@/components/ui/input";
-
-type User = {
-  name: string;
-};
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/utils/supabase";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { loading, user } = useAuth();
 
-  const handleLogin = () => {
-    setUser({ name: "Ahmed" });
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    setUser(null);
-  };
   return (
     <nav className="custom-container sticky top-0 right-0 left-0 z-50 py-4 backdrop-blur-xs">
-      <div className="flex items-center justify-between rounded-full bg-white px-6 py-3 shadow-lg">
-        {/* LEFT */}
-        <div className="flex items-center gap-8">
+      <div className="relative">
+        <div className="flex items-center justify-between rounded-full bg-white px-6 py-3 shadow-lg transition-shadow duration-300">
           <Logo />
+
           <NavLinks />
-        </div>
 
-        {/* RIGHT */}
-        <div className="flex items-center gap-3">
-          {/* Search (desktop only) */}
-          <Input
-            placeholder="Search..."
-            className="hidden bg-background/50 md:block md:w-32 lg:w-40"
-          />
+          <div className="flex items-center gap-3">
+            {!loading && user ? (
+              <>
+                <span className="hidden text-sm font-semibold md:block">
+                  Hi,{" "}
+                  <span className="text-primary-700">
+                    {user.email?.split("@")[0]}
+                  </span>
+                </span>
 
-          {/* Auth */}
-          {user ? (
-            <>
-              <span className="hidden text-sm font-semibold md:block">
-                Hi, {user.name}
-              </span>
+                <Button onClick={handleLogout} variant={"destructive"}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Link to={"/auth/login"}>
+                <Button>Login</Button>
+              </Link>
+            )}
 
-              <Button
-                onClick={handleLogout}
-                className="rounded-full bg-gray-200 px-4 py-1 text-sm hover:bg-gray-300"
-              >
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button onClick={handleLogin}>Login</Button>
-              <Button variant={"outline"}>Register</Button>
-            </>
-          )}
-
-          {/* Mobile Menu Button */}
-          <Button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-            ☰
-          </Button>
-        </div>
-      </div>
-
-      {menuOpen && (
-        <div className="mx-auto mt-3 max-w-7xl rounded-xl bg-white p-4 shadow-lg md:hidden">
-          <div className="flex flex-col gap-4">
-            <Link to="/" onClick={() => setMenuOpen(false)}>
-              Home
-            </Link>
-
-            <Link to="/posts" onClick={() => setMenuOpen(false)}>
-              Explore
-            </Link>
-
-            <Link to="/news" onClick={() => setMenuOpen(false)}>
-              Trending
-            </Link>
-
-            <div className="flex flex-col gap-3 border-t pt-4">
-              {user ? (
-                <>
-                  <span>Hi, {user.name}</span>
-                  <Button onClick={handleLogout}>Logout</Button>
-                </>
-              ) : (
-                <>
-                  <Button onClick={handleLogin}>Login</Button>
-                  <Button className="rounded bg-primary-600 px-3 py-1 text-white">
-                    Register
-                  </Button>
-                </>
-              )}
-            </div>
+            {/* Mobile Menu Button */}
+            <Button
+              size="icon"
+              variant="secondary"
+              className={`transition-all duration-300 md:hidden ${
+                menuOpen ? "rotate-90" : "rotate-0"
+              }`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+            >
+              ☰
+            </Button>
           </div>
         </div>
-      )}
+
+        <div
+          className={`absolute top-full right-0 z-50 w-full max-w-xs origin-top-right transform transition-all duration-300 ease-out md:hidden ${
+            menuOpen
+              ? "visible scale-100 opacity-100"
+              : "invisible scale-95 opacity-0"
+          }`}
+          style={{
+            marginTop: menuOpen ? "0.5rem" : "0",
+          }}
+        >
+          <div className="rounded-xl bg-white p-6 shadow-xl">
+            <NavLinks className="flex flex-col items-center justify-center gap-3" />
+            {!loading && user && (
+              <div className="mt-4 border-t pt-4">
+                <Button
+                  onClick={handleLogout}
+                  variant="destructive"
+                  className="w-full transition-transform duration-200 hover:scale-105"
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </nav>
   );
 };

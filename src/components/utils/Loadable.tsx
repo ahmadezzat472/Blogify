@@ -6,7 +6,7 @@ interface LoadableProps {
 }
 
 const Loadable = ({ Component }: LoadableProps) => (
-  <Suspense fallback={<Loading />}>
+  <Suspense fallback={<Loading fullPage text="Please wait..." />}>
     <Component />
   </Suspense>
 );

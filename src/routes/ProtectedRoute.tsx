@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <Loading />;
+  if (loading) return <Loading fullPage text="Checking authentication..." />;
 
   if (!user) return <Navigate to="/auth/login" replace />;
 

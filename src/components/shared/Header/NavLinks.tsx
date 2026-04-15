@@ -1,9 +1,13 @@
 import { NAV_LINKS } from "@/constants/navLinks";
 import { NavLink } from "react-router";
 
-const NavLinks = () => {
+interface NavLinkProps {
+  className?: string;
+}
+
+const NavLinks = ({ className = "hidden gap-4 md:flex" }: NavLinkProps) => {
   return (
-    <div className="hidden gap-4 md:flex">
+    <div className={className}>
       {NAV_LINKS.map((link) => (
         <NavLink
           key={link.to}

@@ -9,13 +9,13 @@ const LoginPage = () => {
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <LoginForm />
-          <div className="relative hidden bg-muted md:block">
+          <figure className="relative hidden md:block">
             <img
               src={loginImage}
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="h-full w-full object-cover"
             />
-          </div>
+          </figure>
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">

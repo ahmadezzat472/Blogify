@@ -45,7 +45,7 @@ const BlogsPageHeader = ({
             placeholder="Search by title"
             value={searchValue}
             onChange={handleSearchValue}
-            className="h-10 bg-background/90 pl-9"
+            className="h-10 pl-9"
           />
         </div>
       </CardFooter>

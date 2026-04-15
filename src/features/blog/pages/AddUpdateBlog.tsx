@@ -17,6 +17,7 @@ import { useBlogForm } from "../hooks/useBlogForm";
 import { FileText, ImageIcon, Loader2, Tag } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ImageUploader from "../components/ImageUploader";
+import InputsError from "@/components/shared/InputsError";
 
 export default function AddUpdateBlog() {
   const navigate = useNavigate();
@@ -87,8 +88,8 @@ export default function AddUpdateBlog() {
                 },
               })}
             />
-            {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
+            {errors.title && errors.title.message && (
+              <InputsError message={errors.title.message} />
             )}
           </div>
 
@@ -113,10 +114,8 @@ export default function AddUpdateBlog() {
                 },
               })}
             />
-            {errors.description && (
-              <p className="text-sm text-destructive">
-                {errors.description.message}
-              </p>
+            {errors.description && errors.description.message && (
+              <InputsError message={errors.description.message} />
             )}
           </div>
 
@@ -154,10 +153,8 @@ export default function AddUpdateBlog() {
                 </Select>
               )}
             />
-            {errors.category_id && (
-              <p className="text-sm text-destructive">
-                {errors.category_id.message}
-              </p>
+            {errors.category_id && errors.category_id.message && (
+              <InputsError message={errors.category_id.message} />
             )}
           </div>
 

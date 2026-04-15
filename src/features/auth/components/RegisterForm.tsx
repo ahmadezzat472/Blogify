@@ -10,6 +10,7 @@ import {
   getErrorMessages,
   validateRegisterValues,
 } from "../utils/form";
+import InputsError from "@/components/shared/InputsError";
 
 const DEFAULT_VALUES: RegisterValues = {
   name: "",
@@ -67,7 +68,7 @@ const RegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-muted-foreground">
@@ -77,7 +78,9 @@ const RegisterForm = () => {
 
       {/* Name */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name" className="font-semibold text-primary-700">
+          Name
+        </Label>
         <Input
           id="name"
           name="name"
@@ -87,12 +90,14 @@ const RegisterForm = () => {
           value={values.name}
           onChange={handleChange}
         />
-        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+        {errors.name && <InputsError message={errors.name} />}
       </div>
 
       {/* Email */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="font-semibold text-primary-700">
+          Email
+        </Label>
         <Input
           id="email"
           name="email"
@@ -102,13 +107,16 @@ const RegisterForm = () => {
           value={values.email}
           onChange={handleChange}
         />
-        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+        {errors.email && <InputsError message={errors.email} />}
       </div>
 
       {/* Password */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password" className="font-semibold text-primary-700">
+          Password
+        </Label>
         <Input
+          placeholder="••••••••"
           id="password"
           name="password"
           type="password"
@@ -116,26 +124,26 @@ const RegisterForm = () => {
           value={values.password}
           onChange={handleChange}
         />
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password}</p>
-        )}
+        {errors.password && <InputsError message={errors.password} />}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-        isLoading={loading}
-      >
-        Create account
-      </Button>
+      <div className="space-y-3">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+          isLoading={loading}
+        >
+          Create account
+        </Button>
 
-      <p className="text-center text-sm">
-        Already have an account?
-        <Link to="/auth/login" className="underline underline-offset-4">
-          Login
-        </Link>
-      </p>
+        <p className="text-center text-sm">
+          Already have an account?
+          <Link to="/auth/login" className="underline underline-offset-4">
+            Login
+          </Link>
+        </p>
+      </div>
     </form>
   );
 };

@@ -6,7 +6,7 @@ const MainLayout = () => {
   return (
     <>
       <Header />
-      <main className="custom-container min-h-screen mt-6">
+      <main className="custom-container mt-6 mb-12 min-h-screen">
         <Outlet />
       </main>
       <Footer />

@@ -10,6 +10,7 @@ import {
   getErrorMessages,
   validateLoginValues,
 } from "../utils/form";
+import InputsError from "@/components/shared/InputsError";
 
 const DEFAULT_VALUES: LoginValues = {
   email: "",
@@ -69,7 +70,7 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 py-10">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-7 px-6 py-10">
       <div className="flex flex-col items-center gap-1 text-center">
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-muted-foreground">Login to your account</p>
@@ -77,7 +78,9 @@ const LoginForm = () => {
 
       {/* Email */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="font-semibold text-primary-700">
+          Email
+        </Label>
         <Input
           id="email"
           name="email"
@@ -87,21 +90,14 @@ const LoginForm = () => {
           value={values.email}
           onChange={handleChange}
         />
-        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+        {errors.email && <InputsError message={errors.email} />}
       </div>
 
       {/* Password */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center">
-          <Label htmlFor="password">Password</Label>
-          <Button
-            variant="link"
-            type="button"
-            className="ml-auto text-sm underline-offset-2 hover:underline"
-          >
-            Forgot your password?
-          </Button>
-        </div>
+        <Label htmlFor="password" className="font-semibold text-primary-700">
+          Password
+        </Label>
         <Input
           id="password"
           name="password"
@@ -110,26 +106,26 @@ const LoginForm = () => {
           value={values.password}
           onChange={handleChange}
         />
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password}</p>
-        )}
+        {errors.password && <InputsError message={errors.password} />}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-        isLoading={loading}
-      >
-        Login
-      </Button>
+      <div className="space-y-3">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+          isLoading={loading}
+        >
+          Login
+        </Button>
 
-      <p className="text-center text-sm">
-        Don't have an account?{" "}
-        <Link to="/auth/register" className="underline underline-offset-4">
-          Sign up
-        </Link>
-      </p>
+        <p className="text-center text-sm">
+          Don't have an account?{" "}
+          <Link to="/auth/register" className="underline underline-offset-4">
+            Sign up
+          </Link>
+        </p>
+      </div>
     </form>
   );
 };
