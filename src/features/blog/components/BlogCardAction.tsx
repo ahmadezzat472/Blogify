@@ -13,19 +13,21 @@ const BlogCardAction = ({ blogId, authorId }: BlogCardActionProps) => {
 
   const isOwner = user?.id === authorId;
 
-  if (!isOwner) return null;
-
   return (
     <div className="flex items-center gap-2">
       <Button variant={"secondary"} className="flex-1">
         <Link to={`/blogs/${blogId}`}>Read More</Link>
       </Button>
-      <Button size={"icon"} className="">
-        <Link to={`/blog/edit/${blogId}`}>
-          <Pencil />
-        </Link>
-      </Button>
-      <DeleteBlogConfirm blogId={blogId} />
+      {isOwner && (
+        <>
+          <Button size={"icon"} className="">
+            <Link to={`/blog/edit/${blogId}`}>
+              <Pencil />
+            </Link>
+          </Button>
+          <DeleteBlogConfirm blogId={blogId} />
+        </>
+      )}
     </div>
   );
 };

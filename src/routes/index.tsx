@@ -10,8 +10,7 @@ const Pages = {
   Blogs: lazy(() => import("@/features/blog/pages/Blogs")),
   BlogDetails: lazy(() => import("@/features/blog/pages/BlogDetails")),
   AddUpdateBlog: lazy(() => import("@/features/blog/pages/AddUpdateBlog")),
-  // EditPost: lazy(() => import("@/features/posts/pages/EditPost")),
-  // NotFound: lazy(() => import("@/features/common/pages/NotFound")),
+  NotFound: lazy(() => import("@/features/auth/pages/NotFound")),
 };
 
 const AuthPages = {
@@ -79,7 +78,7 @@ const router = createBrowserRouter([
   // Not found
   {
     path: "*",
-    // element: <Loadable Component={Pages.NotFound} />,
+    element: <Loadable Component={Pages.NotFound} />,
   },
 ]);
 
